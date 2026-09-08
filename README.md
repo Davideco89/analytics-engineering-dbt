@@ -216,7 +216,7 @@ Python 3.13.14 is the tested development version, not a strict requirement.
 ### 1. Clone the repository
 
 ```powershell
-git clone <repository-url>
+git clone https://github.com/Davideco89/analytics-engineering-dbt.git
 cd .\analytics-engineering-dbt
 ```
 
@@ -408,3 +408,9 @@ The sample customers, orders, and payments data is derived from:
 Jaffle Shop is a fictional e-commerce dataset created by dbt Labs to demonstrate and test dbt concepts. The original repository is distributed under the [Apache License 2.0](https://github.com/dbt-labs/jaffle-shop-classic/blob/main/LICENSE).
 
 The SQL transformations, dbt tests, BigQuery configuration, Docker Compose setup, documentation, analysis, and Metabase dashboard in this repository are part of this independent implementation.
+
+## License
+
+The original code and project configuration in this repository are released under the [MIT License](LICENSE).
+
+The Jaffle Shop source data remains licensed under the [Apache License 2.0](LICENSES/Apache-2.0.txt) and retains its original attribution to dbt Labs.
