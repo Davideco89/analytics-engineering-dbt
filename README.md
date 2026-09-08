@@ -44,14 +44,21 @@ flowchart LR
 ```text
 analytics-engineering-dbt/
 ├── analytics_engineering/
-│   ├── analyses/
-│   ├── macros/
 │   ├── models/
 │   │   ├── staging/
+│   │   │   ├── _jaffle_shop__models.yml
+│   │   │   ├── _jaffle_shop__sources.yml
+│   │   │   ├── stg_jaffle_shop__customers.sql
+│   │   │   ├── stg_jaffle_shop__orders.sql
+│   │   │   └── stg_jaffle_shop__payments.sql
 │   │   └── marts/
-│   ├── seeds/
-│   ├── snapshots/
+│   │       ├── _marts__models.yml
+│   │       ├── dim_customers.sql
+│   │       ├── fct_orders.sql
+│   │       └── fct_payments.sql
 │   ├── tests/
+│   │   ├── assert_non_negative_payment_amount.sql
+│   │   └── assert_revenue_reconciliation.sql
 │   └── dbt_project.yml
 ├── data/
 │   └── raw/
@@ -62,10 +69,13 @@ analytics-engineering-dbt/
 │   └── images/
 │       ├── dbt_lineage.png
 │       └── metabase_dashboard.png
-├── compose.yml
-├── requirements.txt
+├── LICENSES/
+│   └── Apache-2.0.txt
 ├── .gitignore
-└── README.md
+├── compose.yml
+├── LICENSE
+├── README.md
+└── requirements.txt
 ```
 
 Generated directories, virtual environments, local credentials, and Metabase application data are excluded from version control.
