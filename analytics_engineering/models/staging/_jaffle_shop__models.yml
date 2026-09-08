@@ -1,0 +1,100 @@
+version: 2
+
+models:
+  - name: stg_jaffle_shop__customers
+    description: "Cleaned customer records, with one row per customer."
+    columns:
+      - name: customer_id
+        description: "Unique customer identifier."
+        data_tests:
+          - unique
+          - not_null
+      - name: first_name
+        description: "Customer first name with external spaces removed."
+        data_tests:
+          - not_null
+      - name: last_name
+        description: "Customer last name with external spaces removed."
+        data_tests:
+          - not_null
+
+  - name: stg_jaffle_shop__orders
+    description: "Cleaned order records, with one row per order."
+    columns:
+      - name: order_id
+        description: "Unique order identifier."
+        data_tests:
+          - unique
+          - not_null
+
+      - name: customer_id
+        description: "Identifier of the customer who placed the order."
+        data_tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('stg_jaffle_shop__customers')
+                field: customer_id
+
+      - name: order_date
+        description: "Date on which the order was placed."
+        data_tests:
+          - not_null
+
+      - name: order_status
+        description: "Normalized order status."
+        data_tests:
+          - not_null
+          - accepted_values:
+              arguments:
+                values:
+                  - completed
+                  - placed
+                  - return_pending
+                  - returned
+                  - shipped
+
+      - name: order_age_days
+        description: "Number of days between the order date and the current date."
+        data_tests:
+          - not_null
+
+  - name: stg_jaffle_shop__payments
+    description: "Cleaned payment transactions, with one row per payment."
+    columns:
+      - name: payment_id
+        description: "Unique payment identifier."
+        data_tests:
+          - unique
+          - not_null
+
+      - name: order_id
+        description: "Identifier of the related order."
+        data_tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('stg_jaffle_shop__orders')
+                field: order_id
+
+      - name: payment_method
+        description: "Normalized payment method."
+        data_tests:
+          - not_null
+          - accepted_values:
+              arguments:
+                values:
+                  - bank_transfer
+                  - coupon
+                  - credit_card
+                  - gift_card
+
+      - name: amount_cents
+        description: "Payment amount in the source unit of cents."
+        data_tests:
+          - not_null
+
+      - name: payment_amount
+        description: "Payment amount converted from cents to currency units."
+        data_tests:
+          - not_null

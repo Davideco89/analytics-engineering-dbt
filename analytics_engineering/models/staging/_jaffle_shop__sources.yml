@@ -1,0 +1,70 @@
+version: 2
+
+sources:
+  - name: jaffle_shop
+    description: "Raw e-commerce data from the dbt Labs Jaffle Shop sample dataset."
+    database: "{{ target.project }}"
+    schema: raw
+
+    tables:
+      - name: customers
+        identifier: raw_customers
+        description: "Raw customer records, with one row per customer."
+        columns:
+          - name: id
+            description: "Customer identifier."
+            data_tests:
+              - unique
+              - not_null
+          - name: first_name
+            description: "Customer first name."
+            data_tests:
+              - not_null
+          - name: last_name
+            description: "Customer last name."
+            data_tests:
+              - not_null
+
+      - name: orders
+        identifier: raw_orders
+        description: "Raw orders placed by customers."
+        columns:
+          - name: id
+            description: "Order identifier."
+            data_tests:
+              - unique
+              - not_null
+          - name: user_id
+            description: "Identifier of the customer who placed the order."
+            data_tests:
+              - not_null
+          - name: order_date
+            description: "Date on which the order was placed."
+            data_tests:
+              - not_null
+          - name: status
+            description: "Current order status."
+            data_tests:
+              - not_null
+
+      - name: payments
+        identifier: raw_payments
+        description: "Raw payment transactions associated with orders."
+        columns:
+          - name: id
+            description: "Payment identifier."
+            data_tests:
+              - unique
+              - not_null
+          - name: order_id
+            description: "Identifier of the related order."
+            data_tests:
+              - not_null
+          - name: payment_method
+            description: "Method used for the payment."
+            data_tests:
+              - not_null
+          - name: amount
+            description: "Payment amount stored in cents."
+            data_tests:
+              - not_null

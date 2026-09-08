@@ -1,0 +1,196 @@
+version: 2
+
+models:
+  - name: fct_orders
+    description: >
+      Fact table at order grain. Each row represents one order,
+      enriched with aggregated payment information.
+    columns:
+      - name: order_id
+        description: "Unique identifier of the order."
+        data_tests:
+          - unique
+          - not_null
+
+      - name: customer_id
+        description: "Identifier of the customer who placed the order."
+        data_tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('dim_customers')
+                field: customer_id
+
+      - name: order_date
+        description: "Date on which the order was placed."
+        data_tests:
+          - not_null
+
+      - name: order_status
+        description: "Current status of the order."
+        data_tests:
+          - not_null
+          - accepted_values:
+              arguments:
+                values:
+                  - placed
+                  - shipped
+                  - completed
+                  - returned
+                  - return_pending
+
+      - name: order_age_days
+        description: "Number of days between the order date and the current date."
+
+      - name: order_count
+        description: "Additive order counter, always equal to one."
+
+      - name: payment_count
+        description: "Number of payment records associated with the order."
+        data_tests:
+          - not_null
+
+      - name: zero_amount_payment_count
+        description: "Number of zero-value payments associated with the order."
+
+      - name: total_order_amount
+        description: "Total monetary value of the order in currency units."
+        data_tests:
+          - not_null
+
+      - name: has_multiple_payments
+        description: "True when the order has more than one payment record."
+
+      - name: is_paid
+        description: "True when the total order amount is greater than zero."
+        data_tests:
+          - not_null
+
+  - name: fct_payments
+    description: >
+      Fact table at payment grain. Each row represents one payment,
+      enriched with the related order and customer attributes.
+    columns:
+      - name: payment_id
+        description: "Unique identifier of the payment."
+        data_tests:
+          - unique
+          - not_null
+
+      - name: order_id
+        description: "Identifier of the order associated with the payment."
+        data_tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('fct_orders')
+                field: order_id
+
+      - name: customer_id
+        description: "Identifier of the customer associated with the payment."
+        data_tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('dim_customers')
+                field: customer_id
+
+      - name: order_date
+        description: "Date of the related order."
+        data_tests:
+          - not_null
+
+      - name: order_status
+        description: "Status of the related order."
+
+      - name: payment_method
+        description: "Method used to make the payment."
+        data_tests:
+          - not_null
+          - accepted_values:
+              arguments:
+                values:
+                  - bank_transfer
+                  - coupon
+                  - credit_card
+                  - gift_card
+
+      - name: payment_count
+        description: "Additive payment counter, always equal to one."
+
+      - name: amount_cents
+        description: "Payment value expressed in cents."
+
+      - name: payment_amount
+        description: "Payment value expressed in currency units."
+        data_tests:
+          - not_null
+
+      - name: is_zero_amount
+        description: "True when the payment amount is zero."
+        data_tests:
+          - not_null
+
+  - name: dim_customers
+    description: >
+      Customer dimension at customer grain, including order history,
+      lifetime value and customer classification.
+    columns:
+      - name: customer_id
+        description: "Unique identifier of the customer."
+        data_tests:
+          - unique
+          - not_null
+
+      - name: first_name
+        description: "Customer first name."
+
+      - name: last_name
+        description: "Customer last name."
+
+      - name: full_name
+        description: "Customer full name."
+        data_tests:
+          - not_null
+
+      - name: first_order_date
+        description: >
+          Date of the customer's first order. Null when the customer
+          has never placed an order.
+
+      - name: most_recent_order_date
+        description: >
+          Date of the customer's most recent order. Null when the
+          customer has never placed an order.
+
+      - name: total_orders
+        description: "Total number of orders placed by the customer."
+        data_tests:
+          - not_null
+
+      - name: lifetime_value
+        description: "Total revenue generated by the customer."
+        data_tests:
+          - not_null
+
+      - name: average_order_value
+        description: >
+          Average monetary value of the customer's orders. Null for
+          customers without orders.
+
+      - name: is_new_customer
+        description: "True when the customer has placed exactly one order."
+
+      - name: is_repeat_customer
+        description: "True when the customer has placed more than one order."
+
+      - name: customer_status
+        description: "Customer classification based on order history."
+        data_tests:
+          - not_null
+          - accepted_values:
+              arguments:
+                values:
+                  - no_orders
+                  - new
+                  - repeat
